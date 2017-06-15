@@ -1,15 +1,25 @@
 <template>
   <div id="app">
-  
+    <div>
+      <h1>Tic Tac Toe</h1>
+    </div>
+    <grid></grid>
   </div>
 </template>
 
 <script>
+import Grid from './components/Grid.vue'
+
 export default {
+  components: { Grid },
   name: 'app',
   data () {
     return {
-
+      matches: 0,
+      wins: {
+        O: 0,
+        X: 0
+      }
     }
   }
 }
