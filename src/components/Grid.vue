@@ -1,21 +1,26 @@
 <template>
-  <table class="grid">
-    <tr>
-      <cell name="1"></cell>
-      <cell name="2"></cell>
-      <cell name="3"></cell>
-    </tr>
-    <tr>
-      <cell name="4"></cell>
-      <cell name="5"></cell>
-      <cell name="6"></cell>
-    </tr>
-    <tr>
-      <cell name="7"></cell>
-      <cell name="8"></cell>
-      <cell name="9"></cell>
-    </tr>
-  </table>
+  <div>
+    <div class="gameStatus" :class="gameStatusColor">
+      {{ gameStatusMessage }}
+    </div>
+    <table class="grid">
+      <tr>
+        <cell name="1"></cell>
+        <cell name="2"></cell>
+        <cell name="3"></cell>
+      </tr>
+      <tr>
+        <cell name="4"></cell>
+        <cell name="5"></cell>
+        <cell name="6"></cell>
+      </tr>
+      <tr>
+        <cell name="7"></cell>
+        <cell name="8"></cell>
+        <cell name="9"></cell>
+      </tr>
+    </table>
+  </div>
 </template>
 
 <script>
@@ -50,6 +55,74 @@
                [1, 4, 7], [2, 5, 8], [3, 6, 9], // coloums
                [1, 5, 9], [3, 5, 7]             // diagonals
             ]
+          }
+        },
+
+        computed: {
+          nonActivePlayer() {
+            if(this.activePlayer === 'O') {
+              return 'X'
+            }
+
+            return 'O'
+          }
+        },
+
+        watch: {
+          // watches for change in the value of gameStatus and changes the status
+          //  message and color accordingly
+          gameStatus() {
+            if(this.gameStatus === 'win') {
+              this.gameStatusColor = 'statusWin'
+
+              this.gameStatusmessage = `${this.activePlayer} wins!`
+
+              return
+            } else if (this.gameStatus === 'draw') {
+              this.gameStatusColor = 'statusDraw'
+
+              this.gameStatusMessage = 'Draw!'
+
+              return
+            }
+
+            this.gameStatusMessage = `${this.activePlayer}'s turn`
+          }
+        },
+
+        methods: {
+          changePlayer() {
+            console.log('changing player')
+            this.activePlayer = this.nonActivePlayer
+          },
+
+          changeGameStatus () {
+            if(this.checkForWin()) {
+              return this.gameIsWon()
+              // checks if the game is still not won and all cells are filled
+            } else if (this.moves === 9) {
+              // sets the status to draw
+              return 'draw'
+            }
+            // sets the status to turn
+            return 'turn'
+          },
+
+          // listens for a strike made by the user on cell
+          // it is called by the Cell component
+          created() {
+            Event.$on('strike', (cellNumber) => {
+              // sets either X or O in the clicked cell of the cells array
+              this.cells[cellNumber] = this.activePlayer
+
+              // increments the number of moves
+              this.moves++
+
+              // stores the game status by calling the changeGameStatus method
+              this.gameStatus = this.changeGameStatus()
+              console.log('changeplayer')
+              this.changePlayer()
+            })
           }
         }
     }
