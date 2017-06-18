@@ -105,6 +105,13 @@
             
             this.changePlayer()
           })
+
+          // listens for a restart button press
+          // the data of the component is reinitialized
+          // it is called by the App component
+          Event.$on('gridReset', () => {
+            Object.assign(this.$data, this.$options.data())
+          })
         },
 
         methods: {
