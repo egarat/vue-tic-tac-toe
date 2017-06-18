@@ -31,7 +31,7 @@ export default {
     color: #fff;
     font-family: 'Dosis', Helvetica, sans-serif;
     -webkit-font-smoothing: antialiased;
-    -monz-osx-font-smoothing: grayscale;
+    -moz-osx-font-smoothing: grayscale;
     text-align: center;
     margin: 0px;
   }

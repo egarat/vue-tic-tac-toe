@@ -90,9 +90,66 @@
           }
         },
 
+        // listens for a strike made by the user on cell
+        // it is called by the Cell component
+        created() {
+          Event.$on('strike', (cellNumber) => {
+            // sets either X or O in the clicked cell of the cells array
+            this.cells[cellNumber] = this.activePlayer
+
+            // increments the number of moves
+            this.moves++
+
+            // stores the game status by calling the changeGameStatus method
+            this.gameStatus = this.changeGameStatus()
+            
+            this.changePlayer()
+          })
+        },
+
         methods: {
+          gameIsWon() {
+            // fires win event for the App component to change the score
+            Event.$emit('win', this.activePlayer)
+
+            // sets the game status message
+            this.gameStatusMessage = `${this.activePlayer} wins!`
+
+            // fires an event for the Cell to freeze
+            Event.$emit('freeze')
+
+            // sets the status to win
+            return 'win'
+          },
+
+          areEqual() {
+            var len = arguments.length
+            
+            // loops through each value and compares them with an empty string and
+            // for inequality
+            for(var i = 1; i < len; i++) {
+              if(arguments[i] === '' || arguments[i] !== arguments[i-1])
+                return false
+            }
+            return true
+          },
+
+          checkForWin() {
+            for(let i = 0; i < this.winConditions.length; i++) {
+              // gets a single condition wc from the whole array
+              let wc = this.winConditions[i]
+              let cells = this.cells
+
+              // compare 3 cell values based on the cells in the conditions
+              if(this.areEqual(cells[wc[0]], cells[wc[1]], cells[wc[2]])) {
+                return true
+              }
+            }
+
+            return false
+          },
+
           changePlayer() {
-            console.log('changing player')
             this.activePlayer = this.nonActivePlayer
           },
 
@@ -106,23 +163,6 @@
             }
             // sets the status to turn
             return 'turn'
-          },
-
-          // listens for a strike made by the user on cell
-          // it is called by the Cell component
-          created() {
-            Event.$on('strike', (cellNumber) => {
-              // sets either X or O in the clicked cell of the cells array
-              this.cells[cellNumber] = this.activePlayer
-
-              // increments the number of moves
-              this.moves++
-
-              // stores the game status by calling the changeGameStatus method
-              this.gameStatus = this.changeGameStatus()
-              console.log('changeplayer')
-              this.changePlayer()
-            })
           }
         }
     }

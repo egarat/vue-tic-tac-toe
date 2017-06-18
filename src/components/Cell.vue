@@ -14,6 +14,11 @@
           mark: ''
         }
       },
+
+      created() {
+        Event.$on('freeze', () => this.frozen = true)
+      },
+
       methods: {
         strike() {
           if(!this.frozen) {
